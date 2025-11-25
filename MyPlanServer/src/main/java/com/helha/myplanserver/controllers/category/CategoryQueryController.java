@@ -2,13 +2,12 @@ package com.helha.myplanserver.controllers.category;
 
 import com.helha.myplanserver.application.category.query.CategoryQueryProcessor;
 import com.helha.myplanserver.application.category.query.getall.GetAllCategoryOutput;
+import com.helha.myplanserver.application.category.query.getallbyid.GetAllByIdOutput;
+import com.helha.myplanserver.controllers.subcategory.exception.SubCategoryNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/myplan/categories")
@@ -25,6 +24,17 @@ public class CategoryQueryController {
     @GetMapping()
     public ResponseEntity<GetAllCategoryOutput> getAllCategories() {
         return ResponseEntity.ok(categoryQueryProcessor.getAllCategoryHandler.handle());
+    }
+
+    @Operation(summary = "List of all subcategories")
+    @ApiResponse(responseCode = "200")
+    @GetMapping("{id}")
+    public ResponseEntity<GetAllByIdOutput> getAllSubCategories(@PathVariable Long id) {
+        try{
+            return ResponseEntity.ok(categoryQueryProcessor.getAllByIdHandler.handle(id));
+        } catch (IllegalArgumentException e){
+            throw new SubCategoryNotFoundException(id,id);
+        }
     }
 
 
