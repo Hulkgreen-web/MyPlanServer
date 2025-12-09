@@ -3,6 +3,8 @@ package com.helha.myplanserver.controllers.category;
 import com.helha.myplanserver.application.category.query.CategoryQueryProcessor;
 import com.helha.myplanserver.application.category.query.getall.GetAllCategoryOutput;
 import com.helha.myplanserver.application.category.query.getallbyid.GetAllByIdOutput;
+import com.helha.myplanserver.application.category.query.getbyid.GetCategoryByIdOutput;
+import com.helha.myplanserver.controllers.category.exceptions.CategorynotFoundException;
 import com.helha.myplanserver.controllers.subcategory.exception.SubCategoryNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -34,6 +36,17 @@ public class CategoryQueryController {
             return ResponseEntity.ok(categoryQueryProcessor.getAllByIdHandler.handle(id));
         } catch (IllegalArgumentException e){
             throw new SubCategoryNotFoundException(id,id);
+        }
+    }
+
+    @Operation(summary = "Get a category by its id")
+    @ApiResponse(responseCode = "200")
+    @GetMapping("get/{id}")
+    public ResponseEntity<GetCategoryByIdOutput> findById(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(categoryQueryProcessor.getCategoryByIdHandler.handle(id));
+        } catch (IllegalArgumentException e) {
+            throw new CategorynotFoundException(id);
         }
     }
 
