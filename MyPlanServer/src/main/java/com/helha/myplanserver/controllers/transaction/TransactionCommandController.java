@@ -67,4 +67,16 @@ public class TransactionCommandController {
             throw new IllegalArgumentException("Transaction not found");
         }
     }
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", content = @Content),
+            @ApiResponse(responseCode = "404",
+                    content = @Content(schema = @Schema(implementation = org.springframework.http.ProblemDetail.class)))
+    })
+    @DeleteMapping("{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id){
+        transactionCommandProcessor.deleteTransactionHandler.handle(id);
+        return ResponseEntity.noContent().build();
+    }
+
 }
