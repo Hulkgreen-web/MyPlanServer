@@ -3,6 +3,8 @@ package com.helha.myplanserver.controllers.transaction;
 import com.helha.myplanserver.application.transaction.command.TransactionCommandProcessor;
 import com.helha.myplanserver.application.transaction.command.create.CreateTransactionInput;
 import com.helha.myplanserver.application.transaction.command.create.CreateTrasactionOutput;
+import com.helha.myplanserver.application.transaction.command.update.UpdateTransactionHandler;
+import com.helha.myplanserver.application.transaction.command.update.UpdateTransactionInput;
 import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -47,5 +49,22 @@ public class TransactionCommandController {
         return ResponseEntity
                 .created(location)
                 .body(output);
+    }
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200"),
+            @ApiResponse(responseCode = "400",
+                    content = @Content(schema = @Schema(implementation = org.springframework.http.ProblemDetail.class))),
+            @ApiResponse(responseCode = "404",
+                    content = @Content(schema = @Schema(implementation = org.springframework.http.ProblemDetail.class)))
+    })
+    @PutMapping
+    public ResponseEntity<Void> update(@Valid @RequestBody UpdateTransactionInput input){
+        try {
+            transactionCommandProcessor.updateTransactionHandler.handle(input);
+            return ResponseEntity.noContent().build();
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Transaction not found");
+        }
     }
 }
